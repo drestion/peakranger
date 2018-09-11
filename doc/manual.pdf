@@ -1,0 +1,917 @@
+<div id="introduction"
+><h1
+  >Introduction</h1
+  ><p
+  ><a href="http://ranger.sourceforge.net"
+    >PeakRanger</a
+    > is a multi-purporse software suite for analyzing next-generation sequencing (<a href="http://en.wikipedia.org/wiki/DNA_sequencing"
+    >NGS</a
+    >) data. The suite contains the following tools:</p
+  ><ol style="list-style-type: decimal;"
+  ><li
+    ><code
+      >nr</code
+      > noise rate estimator. Estimates signal to noise ratio which is an indicator for ChIP enrichment</li
+    ><li
+    ><code
+      >lc</code
+      > library complexity calculator. Calculates the ratio of unique reads over total reads. Only accepts bam files.</li
+    ><li
+    ><code
+      >wig</code
+      > coverage file generator. Generates variable step format wiggle file</li
+    ><li
+    ><code
+      >wigpe</code
+      > coverage file generator. Generates bedGraph format wiggle file and supports spliced alignments and thus only supports bam files</li
+    ><li
+    ><code
+      >ranger</code
+      > <a href="http://en.wikipedia.org/wiki/Chip-Sequencing"
+      >ChIP-Seq</a
+      > peak caller. It is able to identify enriched genomic regions while at the same time discover summits within these regions.</li
+    ><li
+    ><code
+      >ccat</code
+      > <a href="http://en.wikipedia.org/wiki/Chip-Sequencing"
+      >ChIP-Seq</a
+      > peak caller. Tuned for the discovery of broad peaks</li
+    ></ol
+  ><p
+  >Both <code
+    >ranger</code
+    > and <code
+    >ccat</code
+    > supports generating HTML-based annotation reports.</p
+  ><p
+  ><code
+    >wigpe</code
+    > can also generate coverage files for bam files containing spliced reads, such as those from RNA-Seq experiments.</p
+  ><p
+  >If you use PeakRanger in your research, please cite:</p
+  ><p
+  ><a href="http://www.biomedcentral.com/1471-2105/12/139/"
+    >Feng X, Grossman R, Stein L: PeakRanger:A cloud-enabled peak caller for ChIP-seq data.BMC Bioinformatics 2011, 12(1):139.</a
+    ></p
+  ><p
+  >if you use the <code
+    >ccat</code
+    > tool, please also cite:</p
+  ><p
+  ><a href="http://bioinformatics.oxfordjournals.org/content/26/9/1199"
+    >Xu, H., L. Handoko, et al. (2010).A signal-noise model for significance analysis of ChIP-seq with negative control.Bioinformatics 26(9): 1199-1204.</a
+    ></p
+  ></div
+><div id="system-requirement"
+><h1
+  >System Requirement</h1
+  ><ol style="list-style-type: decimal;"
+  ><li
+    >The ranger and ccat tool depends on the R programming environment to generate HTML reports. But they can run without it, even with <code
+      >--report</code
+      > and <code
+      >--gene_annot_file</code
+      > set.</li
+    ><li
+    >When the number of peaks called by ranger or ccat is huge, it takes a while for user's browser to parse the generated HTML file.</li
+    ><li
+    >The lc tool needs about 1.7G ram per 10 million aligned reads.</li
+    ></ol
+  ></div
+><div id="obtaining-peakranger"
+><h1
+  >Obtaining PeakRanger</h1
+  ><p
+  >PeakRanger can be downloded from <a href="http://ranger.sourceforge.net"
+    >sourceforge</a
+    >.</p
+  ></div
+><div id="compiling-peakranger-from-source-codes"
+><h1
+  >Compiling PeakRanger from source codes</h1
+  ><div id="compiling-in-ubuntu"
+  ><h2
+    >Compiling in Ubuntu</h2
+    ><p
+    >Required libraries before compiling:</p
+    ><ol style="list-style-type: decimal;"
+    ><li
+      ><p
+	>The <a href="http://www.boost.org/"
+	  >Boost</a
+	  > library v1.47 or newer</p
+	></li
+      ><li
+      ><p
+	>Pthread</p
+	></li
+      ><li
+      ><p
+	>g++</p
+	></li
+      ></ol
+    ><p
+    >Once all the libraries are installed, go to the root path of the unzipped package and type:</p
+    ><p
+    ><code
+      >make</code
+      ></p
+    ><p
+    >This will generate <code
+      >bin/peakranger</code
+      >. Compilation in other Linux distributions is similar.</p
+    ></div
+  ><div id="compiling-in-mac-osx"
+  ><h2
+    >Compiling in Mac OSX</h2
+    ><p
+    >Required libraries before compiling:</p
+    ><ol style="list-style-type: decimal;"
+    ><li
+      ><p
+	>Xcode developer tool kit from Apple</p
+	></li
+      ><li
+      ><p
+	>The Boost library v1.47 or newer</p
+	></li
+      ></ol
+    ><p
+    >The Xcode kit can be installed using the OSX installation disk. The Boost library can be installed by following the instructions on its website. If you do not have root access, change the BOOST_PATH variable in the make file:</p
+    ><p
+    >BOOST_PATH = -I/path/to/your/boost/header -L/path/to/your/boost/library</p
+    ><p
+    >Once all the libraries are installed, go to the root path of the unzipped package and type:</p
+    ><p
+    ><code
+      >make</code
+      ></p
+    ><p
+    >If the compilation failed, double check the BOOST_PATH variable is correctly set. The resulting binaries require dynamic boost library files, to make sure <code
+      >peakranger</code
+      > can find these files, type :</p
+    ><p
+    ><code
+      >export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/path/to/your/boost/library</code
+      ></p
+    ><p
+    >please change the <code
+      >path</code
+      > accordingly.</p
+    ></div
+  ><div id="compiling-in-windows"
+  ><h2
+    >Compiling in Windows</h2
+    ><p
+    >Not supported but should be possible.</p
+    ></div
+  ></div
+><div id="synopsis"
+><h1
+  >Synopsis</h1
+  ><p
+  >peakranger lc sample.bam</p
+  ><p
+  >peakranger nr --format bam sample.bam control.bam</p
+  ><p
+  >peakranger wig --format bam sample.bam sample.bam_coverage</p
+  ><p
+  >peakranger wig --format bed sample.bed sample.bed_coverage</p
+  ><p
+  >peakranger wigpe sample.bam sample.bam_coverage</p
+  ><p
+  >peakranger wigpe sample.bam sample.bam_coverage_splitted -s</p
+  ><p
+  >peakranger wigpe sample.bam sample.bam_coverage_splitted_by_strand -sx</p
+  ><p
+  >peakranger wigpe sample.bam sample.bam_coverage_gzipped -z</p
+  ><p
+  >peakranger wigpe sample.bam sample.bam_coverage_splitted_by_strand_gzip -sxz</p
+  ><p
+  >peakranger wigpe sample.bam sample.bam_coverage_read_extend_to_200 -l 200</p
+  ><p
+  >peakranger ranger --format bam sample.bam control.bam ranger_result</p
+  ><p
+  >peakranger ranger --format bam sample.bam control.bam ranger_result_threaded_faster -t 3</p
+  ><p
+  >peakranger ccat --format bam sample.bam contro.bam ccat_result</p
+  ><p
+  >peakranger ccat --format bam sample.bam contro.bam ccat_result_with_HTML_report <br
+     /> --report --gene_annot_file hg19refGene.txt <br
+     /> peakranger ccat --format bam sample.bam contro.bam ccat_result_with_HTML_report_5kb_region <br
+     /> --report --gene_annot_file hg19refGene.txt <br
+     /> --plot_region 10000</p
+  ></div
+><div id="command-line-options"
+><h1
+  >Command line options</h1
+  ><div id="nr"
+  ><h2
+    >nr</h2
+    ><div id="input"
+    ><h3
+      >input</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-d,--data</code
+	></p
+      ></td><td>  
+<p
+      >data file.</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>-c,--control</code
+	></p
+      ></td><td> 
+<p
+      >control file.</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>--format</code
+	></p
+      ></td><td> 
+<p
+      >the format of the data file, can be one of : bowtie, sam, bam and bed.</p
+      ></td></tr></table>  
+</div
+    ><div id="qualities"
+    ><h3
+      >Qualities</h3
+      ><table><tr><td> 
+<p
+      ><code
+	>-l,--ext_length</code
+	></p
+      ></td><td> 
+<p
+      >read extension length</p
+      ></td></tr></table>
+</div
+    ><div id="other"
+    ><h3
+      >Other</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-h,--help</code
+	></p
+      ></td><td> 
+<p
+      >show the usage</p
+      ></td></tr><tr><td>
+  <p
+      ><code
+	>--verbose</code
+	></p
+      ></td><td>  
+<p
+      >show progress</p
+      ></td></tr><tr><td>
+  <p
+      ><code
+	>--version</code
+	></p
+      ></td><td>  
+<p
+      >output the version number</p
+      ></td></tr></table></div
+    ></div
+  ><div id="lc"
+  ><h2
+    >lc</h2
+    ><div id="input-1"
+    ><h3
+      >input</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-d,--data</code
+	></p
+      ></td><td>  
+<p
+      >data file.</p
+      ></td></tr></table>  
+</div
+    ><div id="other-1"
+    ><h3
+      >Other</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-h,--help</code
+	></p
+      ></td><td> 
+<p
+      >show the usage</p
+      ></td></tr><tr><td>
+  <p
+      ><code
+	>--verbose</code
+	></p
+      ></td><td>  
+<p
+      >show progress</p
+      ></td></tr><tr><td>
+  <p
+      ><code
+	>--version</code
+	></p
+      ></td><td>  
+<p
+      >output the version number</p
+      ></td></tr></table></div
+    ></div
+  ><div id="wig"
+  ><h2
+    >wig</h2
+    ><div id="input-2"
+    ><h3
+      >input</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-d,--data</code
+	></p
+      ></td><td>  
+<p
+      >data file.</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>--format</code
+	></p
+      ></td><td> 
+<p
+      >the format of the data file, can be one of : bowtie, sam, bam and bed.</p
+      ></td></tr></table>  
+</div
+    ><div id="output"
+    ><h3
+      >Output</h3
+      ><table><tr><td>
+  <p
+      ><code
+	>-o,--output</code
+	></p
+      ></td><td>  
+<p
+      >the output location</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>-s,--split</code
+	></p
+      ></td><td> 
+<p
+      >generate one wig file per chromosome</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>-z,--gzip</code
+	></p
+      ></td><td> 
+<p
+      >compress the output</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>-x,--strand</code
+	></p
+      ></td><td> 
+<p
+      >generate one wig file per strand</p
+      ></td></tr></table>
+</div
+    ><div id="qualities-1"
+    ><h3
+      >Qualities</h3
+      ><table><tr><td> 
+<p
+      ><code
+	>-l,--ext_length</code
+	></p
+      ></td><td> 
+<p
+      >read extension length</p
+      ></td></tr></table>
+</div
+    ><div id="other-2"
+    ><h3
+      >Other</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-h,--help</code
+	></p
+      ></td><td> 
+<p
+      >show the usage</p
+      ></td></tr><tr><td>
+  <p
+      ><code
+	>--verbose</code
+	></p
+      ></td><td>  
+<p
+      >show progress</p
+      ></td></tr><tr><td>
+  <p
+      ><code
+	>--version</code
+	></p
+      ></td><td>  
+<p
+      >output the version number</p
+      ></td></tr></table></div
+    ></div
+  ><div id="wigpe"
+  ><h2
+    >wigpe</h2
+    ><div id="input-3"
+    ><h3
+      >input</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-d,--data</code
+	></p
+      ></td><td>  
+<p
+      >data file.</p
+      ></td></tr></table>  
+</div
+    ><div id="output-1"
+    ><h3
+      >Output</h3
+      ><table><tr><td>
+  <p
+      ><code
+	>-o,--output</code
+	></p
+      ></td><td>  
+<p
+      >the output location</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>-s,--split</code
+	></p
+      ></td><td> 
+<p
+      >generate one wig file per chromosome</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>-z,--gzip</code
+	></p
+      ></td><td> 
+<p
+      >compress the output</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>-x,--strand</code
+	></p
+      ></td><td> 
+<p
+      >generate one wig file per strand</p
+      ></td></tr></table>
+</div
+    ><div id="qualities-2"
+    ><h3
+      >Qualities</h3
+      ><table><tr><td> 
+<p
+      ><code
+	>-l,--ext_length</code
+	></p
+      ></td><td> 
+<p
+      >read extension length</p
+      ></td></tr></table>
+</div
+    ><div id="other-3"
+    ><h3
+      >Other</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-h,--help</code
+	></p
+      ></td><td> 
+<p
+      >show the usage</p
+      ></td></tr><tr><td>
+  <p
+      ><code
+	>--verbose</code
+	></p
+      ></td><td>  
+<p
+      >show progress</p
+      ></td></tr><tr><td>
+  <p
+      ><code
+	>--version</code
+	></p
+      ></td><td>  
+<p
+      >output the version number</p
+      ></td></tr></table></div
+    ></div
+  ><div id="ranger"
+  ><h2
+    >ranger</h2
+    ><div id="input-4"
+    ><h3
+      >input</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-d,--data</code
+	></p
+      ></td><td>  
+<p
+      >data file.</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>-c,--control</code
+	></p
+      ></td><td> 
+<p
+      >control file.</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>--format</code
+	></p
+      ></td><td> 
+<p
+      >the format of the data file, can be one of : bowtie, sam, bam and bed.</p
+      ></td></tr></table>  
+</div
+    ><div id="output-2"
+    ><h3
+      >Output</h3
+      ><table><tr><td>
+  <p
+      ><code
+	>-o,--output</code
+	></p
+      ></td><td>  
+<p
+      >the output location</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>--report</code
+	></p
+      ></td><td> 
+<p
+      >generate html reports</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>--plot_region</code
+	></p
+      ></td><td> 
+<p
+      >the length of the snapshort regions in the HTML report. It also controls the search span for nearby genes.</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>--gene_annot_file</code
+	></p
+      ></td><td> 
+<p
+      >the gene annotation file</p
+      ></td></tr></table>
+</div
+    ><div id="qualities-3"
+    ><h3
+      >Qualities</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-p,--pval</code
+	></p
+      ></td><td>  
+<p
+      >p value cut off</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>-q,--FDR</code
+	></p
+      ></td><td>  
+<p
+      >FDR cut off</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>-l,--ext_length</code
+	></p
+      ></td><td> 
+<p
+      >read extension length</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>-r,--delta</code
+	></p
+      ></td><td> 
+<p
+      >sensitivity of the summit detector</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>-b,--bandwidth</code
+	></p
+      ></td><td> 
+<p
+      >smoothing bandwidth.</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>--pad</code
+	></p
+      ></td><td>  
+<p
+      >pad read coverage to avoid false positive summits</p
+      ></td></tr></table>
+
+</div
+    ><div id="running-modes"
+    ><h3
+      >Running modes</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-t</code
+	></p
+      ></td><td> 
+<p
+      >number of threads.(default: 1)</p
+      ></td></tr></table> 
+</div
+    ><div id="other-4"
+    ><h3
+      >Other</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-h,--help</code
+	></p
+      ></td><td> 
+<p
+      >show the usage</p
+      ></td></tr><tr><td>
+  <p
+      ><code
+	>--verbose</code
+	></p
+      ></td><td>  
+<p
+      >show progress</p
+      ></td></tr><tr><td>
+  <p
+      ><code
+	>--version</code
+	></p
+      ></td><td>  
+<p
+      >output the version number</p
+      ></td></tr></table></div
+    ></div
+  ><div id="ccat"
+  ><h2
+    >ccat</h2
+    ><div id="input-5"
+    ><h3
+      >input</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-d,--data</code
+	></p
+      ></td><td>  
+<p
+      >data file.</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>-c,--control</code
+	></p
+      ></td><td> 
+<p
+      >control file.</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>--format</code
+	></p
+      ></td><td> 
+<p
+      >the format of the data file, can be one of : bowtie, sam, bam and bed.</p
+      ></td></tr></table>  
+</div
+    ><div id="output-3"
+    ><h3
+      >Output</h3
+      ><table><tr><td>
+  <p
+      ><code
+	>-o,--output</code
+	></p
+      ></td><td>  
+<p
+      >the output location</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>--report</code
+	></p
+      ></td><td> 
+<p
+      >generate html reports</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>--plot_region</code
+	></p
+      ></td><td> 
+<p
+      >the length of the snapshort regions in the HTML report. It also controls the search span for nearby genes.</p
+      ></td></tr><tr><td>
+<p
+      ><code
+	>--gene_annot_file</code
+	></p
+      ></td><td> 
+<p
+      >the gene annotation file</p
+      ></td></tr></table>
+</div
+    ><div id="qualities-4"
+    ><h3
+      >Qualities</h3
+      ><table><tr><td> 
+<p
+      ><code
+	>-q,--FDR</code
+	></p
+      ></td><td>  
+<p
+      >FDR cut off</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>--win_size</code
+	></p
+      ></td><td> 
+<p
+      >sliding window size</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>--win_step</code
+	></p
+      ></td><td> 
+<p
+      >window moving step</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>--min_count</code
+	></p
+      ></td><td> 
+<p
+      >minimum window reads count</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>--min_score</code
+	></p
+      ></td><td>  
+<p
+      >minimum window reads fold change</p
+      ></td></tr><tr><td> 
+<p
+      ><code
+	>-l,--ext_length</code
+	></p
+      ></td><td> 
+<p
+      >read extension length</p
+      ></td></tr></table>
+</div
+    ><div id="other-5"
+    ><h3
+      >Other</h3
+      ><table><tr><td>
+<p
+      ><code
+	>-h,--help</code
+	></p
+      ></td><td> 
+<p
+      >show the usage</p
+      ></td></tr><tr><td>
+  <p
+      ><code
+	>--verbose</code
+	></p
+      ></td><td>  
+<p
+      >show progress</p
+      ></td></tr><tr><td>
+  <p
+      ><code
+	>--version</code
+	></p
+      ></td><td>  
+<p
+      >output the version number</p
+      ></td></tr></table>
+</div
+    ></div
+  ></div
+><div id="output-files"
+><h1
+  >Output files</h1
+  ><div id="lc-1"
+  ><h3
+    >lc</h3
+    ><p
+    >lc does not generate any files</p
+    ></div
+  ><div id="nr-1"
+  ><h3
+    >nr</h3
+    ><p
+    >nr does not generate any files</p
+    ></div
+  ><div id="wig-1"
+  ><h3
+    >wig</h3
+    ><p
+    >wig generates a single file by default. When -x or -s is specified, it generates multiple files depending on the datasets.</p
+    ></div
+  ><div id="wigpe-1"
+  ><h3
+    >wigpe</h3
+    ><p
+    >similar to wig</p
+    ></div
+  ><div id="ranger-1"
+  ><h3
+    >ranger</h3
+    ><p
+    >Three files will be geneated:</p
+    ><p
+    ><code
+      >_summit.bed</code
+      ></p
+    ><p
+    ><code
+      >_region.bed</code
+      ></p
+    ><p
+    ><code
+      >_details</code
+      ></p
+    ><p
+    >The first two bed files can be visualized in <a href="http://www.broadinstitute.org/igv/"
+      >IGV</a
+      >. <code
+      >_summit.bed</code
+      > file contains the locations of summits ranked by their FDR. <code
+      >_regions.bed</code
+      > file contains the locations of regions ranked by their FDR. Each summit or region is annotated by the 4th column.</p
+    ><p
+    ><code
+      >_details</code
+      > file contains both summits and regions as well as the regions's FDR and p values.</p
+    ><p
+    >When <code
+      >--report</code
+      > is enabled, this file will also contain nearby genes of called peaks.</p
+    ><p
+    ><code
+      >--report</code
+      > enables HTML reporting that generates a folder named using the data file's name. The folder contains a single <code
+      >index.html</code
+      > visualizable in most browsers.</p
+    ></div
+  ><div id="ccat-1"
+  ><h3
+    >ccat</h3
+    ><p
+    >Similar to ranger</p
+    ></div
+  ></div
+>
