@@ -1,5 +1,6 @@
 # peakranger
 The peak caller for ChIP-Seq data
+
 Introduction
 ============
 PeakRanger is a multi-purporse software suite for analyzing next-generation sequencing (NGS) data. 
